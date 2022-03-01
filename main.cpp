@@ -18,7 +18,7 @@
 #include "Audio.h"
 #include "Object3d.h"
 #include "Model.h"
-
+#include "Sprite.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -49,10 +49,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     Object3d::StaticInitialize(dxCommon->GetDev(),winApp->window_width,winApp->window_height);
 
-    // スプライト
-    /*SpriteCommon spriteCommon;
-    const int SPRITES_NUM = 1;
-    Sprite sprites[SPRITES_NUM];*/
+    // スプライト静的初期化
+    Sprite::StaticInitialize(dxCommon->GetDev(), WinApp::window_width, WinApp::window_height);
 
 #pragma endregion DirectX初期化処理
 
@@ -72,6 +70,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_1->Update();
     objsquare_2->Update();
     objsquare_3->Update();
+
+    // テクスチャ読み込み
+    Sprite::LoadTexture(1, L"Resources/house.png");
+    // 背景スプライト生成
+    Sprite* sprite = nullptr;
+    sprite = Sprite::Create(1, { 0.0f,0.0f });
+    //sprite->SetTextureRect();
 
 #pragma endregion 描画初期化処理
 
@@ -184,15 +189,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_3->Draw();
         // 3Dオブジェクト描画後処理
         Object3d::PostDraw();
-        //// スプライト共通コマンド
-        //SpriteCommonBeginDraw(spriteCommon, dxCommon->GetCmdList());
-        //// スプライト描画
-        //for (int i = 0; i < _countof(sprites); i++) {
-        //    SpriteDraw(sprites[i], dxCommon->GetCmdList(), spriteCommon, dxCommon->GetDev());
-        //}
-        //// デバッグテキスト描画
-        //debugText.DrawAll(dxCommon->GetCmdList(), spriteCommon, dxCommon->GetDev());
-
+        
+#pragma region 前景スプライト描画
+        // 前景スプライト描画前処理
+        Sprite::PreDraw(dxCommon->GetCmdList());
+        sprite->Draw();
+        // スプライト描画後処理
+        Sprite::PostDraw();
+#pragma endregion
         // ４．描画コマンドここまで
         dxCommon->PostDraw();
 
