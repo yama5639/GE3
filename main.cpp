@@ -20,12 +20,15 @@
 #include "Model.h"
 #include "Sprite.h"
 
+//#include "fbxsdk.h"
+#include "FbxLoader.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-
+    //FbxManager* fbxManager = FbxManager::Create();
 #pragma region WindowsAPI初期化
     WinApp* winApp = nullptr;
 
@@ -53,6 +56,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Sprite::StaticInitialize(dxCommon->GetDev(), WinApp::window_width, WinApp::window_height);
 
 #pragma endregion DirectX初期化処理
+
+    FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
 
 #pragma region 描画初期化処理
 
@@ -206,7 +211,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
    // xAudio2.Reset();
     // 音声データ解放
    // SoundUnload(&soundData1);
-
+    FbxLoader::GetInstance()->Finalize();
 #pragma region WindowsAPI後始末
     winApp->Finalize();
 #pragma endregion WindowsAPI後始末
