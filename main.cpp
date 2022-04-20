@@ -21,7 +21,7 @@
 #include "Sprite.h"
 
 //#include "fbxsdk.h"
-#include "FbxLoader.h"
+//#include "FbxLoader.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -57,10 +57,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion DirectX初期化処理
 
-    FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
+    //FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
+
+    float time = 0;
+    int fallF = 0;
+    float g = 9.8f;
+    float vy = 0.0f;
 
 #pragma region 描画初期化処理
-
+    XMFLOAT3 Player_Pos = { 0,+100,0 };
+    XMFLOAT3 Player_Rot;
+    XMFLOAT3 Player_Scl = { 1,1,1 };
     Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
     Object3d* objsquare_1 = Object3d::Create();
@@ -70,6 +77,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_2->SetModel(modelsquare_1);
     objsquare_3->SetModel(modelsquare_1);
 
+    objsquare_1->SetScale({ Player_Scl });
     objsquare_2->SetPosition({ -100,0,-10 });
     objsquare_3->SetPosition({ +100,0,-10 });
     objsquare_1->Update();
@@ -99,6 +107,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     while (true)  // ゲームループ
     {
+
 #pragma region ウィンドウメッセージ処理
         if (winApp->ProcessMessage()) {
             break;
@@ -122,6 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //scale /= 2.0f; // [0,+1]の数値
         scale *= 360.0f;
 
+        objsquare_1->SetPosition({ Player_Pos });
         objsquare_2->SetModel(modelsquare_1);
         objsquare_3->SetModel(modelsquare_1);
 
@@ -131,15 +141,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         //スペースキー押したら
         if (input->PushKey(DIK_SPACE)) {
+            // spaceでモデル切り替え
             // 画面クリアカラーの数値を書き換える
             clearColor[1] = 1.0f;
-            objsquare_2->SetModel(modelsquare_2);
-            objsquare_3->SetModel(modelsquare_2);
+            /*objsquare_2->SetModel(modelsquare_2);
+            objsquare_3->SetModel(modelsquare_2);*/
+            
+            //自由落下フラグ
+            fallF = 1;
+        }
+
+        if (input->PushKey(DIK_R)) {
+            Player_Pos.y = +100;
+            fallF = 0;
+            time = 0.2f;
         }
 
         // 座標操作
         if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
             //操作記入欄
+        }
+
+        //自由落下
+        if (fallF == 1) {
+            time += 0.02f;
+            //vy -= g;
+            //Player_Pos.y += vy;
+            Player_Pos.y -= g * time * time / 2.0f;
         }
 
         /*if (input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
@@ -208,10 +236,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     }
     // XAudio2解放
-   // xAudio2.Reset();
+    // xAudio2.Reset();
     // 音声データ解放
-   // SoundUnload(&soundData1);
-    FbxLoader::GetInstance()->Finalize();
+    // SoundUnload(&soundData1);
+    //FbxLoader::GetInstance()->Finalize();
 #pragma region WindowsAPI後始末
     winApp->Finalize();
 #pragma endregion WindowsAPI後始末

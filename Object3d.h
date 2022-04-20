@@ -114,7 +114,7 @@ public: // メンバ関数
 
 	/// 座標の設定
 	void SetPosition(XMFLOAT3 position) { this->position = position; }
-
+	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
 private: // メンバ変数
 	ComPtr<ID3D12Resource> constBuffB0; // 定数バッファ
 	// 色
