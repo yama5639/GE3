@@ -6,6 +6,8 @@
 #include <d3dx12.h>
 #include <string>
 
+#include "Fbx_Model.h"
+
 class FbxLoader
 {
 private:
@@ -20,6 +22,7 @@ public:
 	void Initialize(ID3D12Device* device);
 	void Finalize();
 	void LoadModaleFromFile(const string& modelName);
+	void ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode);
 private:
 	// privateなコンストラクタ（シングルトンパターン）
 	FbxLoader() = default;

@@ -156,6 +156,7 @@
     <ClCompile Include="3d\FbxLoader.cpp" />
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="DirectXCommon.cpp" />
+    <ClCompile Include="Fbx_Model.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="3d\FbxLoader.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="DirectXCommon.h" />
+    <ClInclude Include="Fbx_Model.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object3d.h" />
