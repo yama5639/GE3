@@ -20,8 +20,8 @@
 #include "Model.h"
 #include "Sprite.h"
 
-//#include "fbxsdk.h"
-//#include "FbxLoader.h"
+#include "fbxsdk.h"
+#include "FbxLoader.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -57,17 +57,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma endregion DirectX初期化処理
 
-    //FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
+    FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
+    FbxLoader::GetInstance()->LoadModaleFromFile("cube");
 
     float time = 0;
     int fallF = 0;
     float g = 9.8f;
     float vy = 0.0f;
 
+
 #pragma region 描画初期化処理
     XMFLOAT3 Player_Pos = { 0,+100,0 };
     XMFLOAT3 Player_Rot;
-    XMFLOAT3 Player_Scl = { 1,1,1 };
+    XMFLOAT3 Player_Scl = { 3,3,3 };
     Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
     Object3d* objsquare_1 = Object3d::Create();
@@ -151,6 +153,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             fallF = 1;
         }
 
+        //リセット
         if (input->PushKey(DIK_R)) {
             Player_Pos.y = +100;
             fallF = 0;
@@ -164,7 +167,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         //自由落下
         if (fallF == 1) {
-            time += 0.02f;
+            time += 0.03f;
             //vy -= g;
             //Player_Pos.y += vy;
             Player_Pos.y -= g * time * time / 2.0f;
@@ -211,7 +214,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 #pragma region グラフィックスコマンド
-
+        
         dxCommon->PreDraw();
 
         // 3Dオブジェクト描画前処理
@@ -239,7 +242,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // xAudio2.Reset();
     // 音声データ解放
     // SoundUnload(&soundData1);
-    //FbxLoader::GetInstance()->Finalize();
+    FbxLoader::GetInstance()->Finalize();
 #pragma region WindowsAPI後始末
     winApp->Finalize();
 #pragma endregion WindowsAPI後始末
