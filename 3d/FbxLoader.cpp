@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+using namespace DirectX;
+
 const std::string FbxLoader::baseDirectory = "Resources/";
 
 FbxLoader* FbxLoader::GetInstance()
@@ -51,4 +53,49 @@ void FbxLoader::LoadModaleFromFile(const string& modelName) {
     //ファイルからロードしたFBXに情報をシーンにインポート
     fbxImporter->Import(fbxScene);
 
+    Fbx_Model* model = new Fbx_Model();
+    model->name = modelName;
+    int nodeCount = fbxScene->GetNodeCount();
+    model->nodes.reserve(nodeCount);
+    ParseNodeRecursive(model, fbxScene->GetRootNode());
+    fbxScene->Destroy();
+}
+
+void FbxLoader::ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode,Node* parent) {
+    string name = fbxNode->GetName();
+
+    model->nodes.emplace_back();
+    Node& node = model->nodes.back();
+    node.name = fbxNode->GetName();
+    FbxDouble3 rotation = fbxNode->LclRotation.Get();
+    FbxDouble3 scaling = fbxNode->LclScaling.Get();
+    FbxDouble3 translation = fbxNode->LclTranslation.Get();
+
+    node.rotation = { (float)rotation[0],(float)rotation[1],(float)rotation[2],0.0f };
+    node.scaling = { (float)scaling[0],(float)scaling[1],(float)scaling[2],0.0f };
+    node.translation = { (float)translation[0],(float)translation[1],(float)translation[2],1.0f };
+
+    node.rotation.m128_f32[0] = XMConvertToRadians(node.rotation.m128_f32[0]);
+    node.rotation.m128_f32[1] = XMConvertToRadians(node.rotation.m128_f32[1]);
+    node.rotation.m128_f32[2] = XMConvertToRadians(node.rotation.m128_f32[2]);
+
+    XMMATRIX matScaling, matRotation, matTranslation;
+    matScaling = XMMatrixScalingFromVector(node.scaling);
+    matRotation = XMMatrixRotationRollPitchYawFromVector(node.rotation);
+    matTranslation = XMMatrixTranslationFromVector(node.translation);
+
+   /* node.transform = XMMatrixIdentity();
+    node.transform *= matScaling;
+    node.transform *= matRotation;
+    node.transform *= matTranslation;*/
+
+    node.globalTransform = node.transform;
+    if (parent) {
+        node.parent = parent;
+        node.globalTransform *= parent->globalTransform;
+    }
+
+    for (int i = 0; i < fbxNode->GetChildCount(); i++) {
+        ParseNodeRecursive(model, fbxNode->GetChild(i), &node);
+    }
 }

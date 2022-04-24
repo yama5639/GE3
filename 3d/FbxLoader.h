@@ -22,7 +22,7 @@ public:
 	void Initialize(ID3D12Device* device);
 	void Finalize();
 	void LoadModaleFromFile(const string& modelName);
-	void ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode);
+	void ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode,Node* parent = nullptr);
 private:
 	// privateなコンストラクタ（シングルトンパターン）
 	FbxLoader() = default;

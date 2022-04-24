@@ -68,7 +68,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region 描画初期化処理
     XMFLOAT3 Player_Pos = { 0,+100,0 };
-    XMFLOAT3 Player_Rot;
     XMFLOAT3 Player_Scl = { 3,3,3 };
     Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
