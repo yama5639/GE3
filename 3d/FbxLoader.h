@@ -21,12 +21,12 @@ public:
 	static FbxLoader* GetInstance();
 	void Initialize(ID3D12Device* device);
 	void Finalize();
-	void LoadModaleFromFile(const string& modelName);
+	Fbx_Model* LoadModaleFromFile(const string& modelName);
 	void ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode,Node* parent = nullptr);
 	void ParseMesh(Fbx_Model* model, FbxNode* fbxNode);
 	void ParseMeshVertices(Fbx_Model* model, FbxMesh* fbxMesh);
 	void ParseMeshFaces(Fbx_Model* model, FbxMesh* fbxMesh);
-	void ParseMaterial(Fbx_Model* model, FbxMesh* fbxNode);
+	void ParseMaterial(Fbx_Model* model, FbxNode* fbxNode);
 	void LoadTexture(Fbx_Model* model, const std::string& fullpath);
 
 	std::string ExtractFileName(const std::string& path);

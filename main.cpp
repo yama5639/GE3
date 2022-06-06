@@ -22,6 +22,8 @@
 
 #include "fbxsdk.h"
 #include "FbxLoader.h"
+#include "Fbx_Object3d.h"
+#include "DebugCamera.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -38,7 +40,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     MSG msg{};  // メッセージ
 #pragma endregion WindowsAPI初期化
 
-#pragma region DirectX初期化処理
     HRESULT result;
 
     DirectXCommon* dxCommon = nullptr;
@@ -55,16 +56,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     // スプライト静的初期化
     Sprite::StaticInitialize(dxCommon->GetDev(), WinApp::window_width, WinApp::window_height);
 
-#pragma endregion DirectX初期化処理
+    Fbx_Model* model1 = nullptr;
+    Fbx_Object3d* object1 = nullptr;
 
     FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
-    FbxLoader::GetInstance()->LoadModaleFromFile("cube");
+    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("cube");
+
+    Camera* camera = nullptr;
+    camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
+    Fbx_Object3d::SetDevice(dxCommon->GetDev());
+    Fbx_Object3d::SetCamera(camera);
+    camera->SetTarget({ 0,20,0 });
+    //camera->SetDistance(100.0f);
+
+    Fbx_Object3d::CreateGraphicsPipeline();
+
+    object1 = new Fbx_Object3d;
+    object1->Initialize();
+    object1->SetModel(model1);
 
     float time = 0;
     int fallF = 0;
     float g = 9.8f;
     float vy = 0.0f;
-
 
 #pragma region 描画初期化処理
     XMFLOAT3 Player_Pos = { 0,+100,0 };
@@ -210,7 +224,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_1->Update();
         objsquare_2->Update();
         objsquare_3->Update();
-
+        object1->Update();
 
 #pragma region グラフィックスコマンド
         
@@ -222,6 +236,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_1->Draw();
         objsquare_2->Draw();
         objsquare_3->Draw();
+        object1->Draw(dxCommon->GetCmdList());
         // 3Dオブジェクト描画後処理
         Object3d::PostDraw();
         
@@ -254,6 +269,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     delete objsquare_1;
     delete objsquare_2;
     delete objsquare_3;
+
+    delete(object1);
+    delete(model1);
 
     return 0;
 }

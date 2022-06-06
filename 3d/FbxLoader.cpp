@@ -35,7 +35,7 @@ void FbxLoader::Finalize()
     fbxManager->Destroy();
 }
 
-void FbxLoader::LoadModaleFromFile(const string& modelName) {
+Fbx_Model* FbxLoader::LoadModaleFromFile(const string& modelName) {
     //モデルと同じ名前のファイルから読み込む
     const string directoryPath = baseDirectory + modelName + "/";
     //拡張子,FBXを付与
@@ -60,6 +60,10 @@ void FbxLoader::LoadModaleFromFile(const string& modelName) {
     model->nodes.reserve(nodeCount);
     ParseNodeRecursive(model, fbxScene->GetRootNode());
     fbxScene->Destroy();
+
+    model->CreateBuffers(device);
+
+    return model;
 }
 
 void FbxLoader::ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode,Node* parent) {
@@ -85,10 +89,10 @@ void FbxLoader::ParseNodeRecursive(Fbx_Model* model, FbxNode* fbxNode,Node* pare
     matRotation = XMMatrixRotationRollPitchYawFromVector(node.rotation);
     matTranslation = XMMatrixTranslationFromVector(node.translation);
 
-   /* node.transform = XMMatrixIdentity();
+    node.transform = XMMatrixIdentity();
     node.transform *= matScaling;
     node.transform *= matRotation;
-    node.transform *= matTranslation;*/
+    node.transform *= matTranslation;
 
     node.globalTransform = node.transform;
     if (parent) {
@@ -201,7 +205,7 @@ std::string FbxLoader::ExtractFileName(const std::string& path)
     return path;
 }
 
-void FbxLoader::ParseMaterial(Fbx_Model* model, FbxMesh* fbxNode) {
+void FbxLoader::ParseMaterial(Fbx_Model* model, FbxNode* fbxNode) {
     const int materialCount = fbxNode->GetMaterialCount();
     if (materialCount > 0) {
         FbxSurfaceMaterial* material = fbxNode->GetMaterial(0);

@@ -48,6 +48,15 @@
     <ClCompile Include="3d\FbxLoader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Fbx_Object3d.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCamera.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
@@ -58,6 +67,9 @@
     </None>
     <None Include="Resources\shaders\OBJShaderHeader.hlsli">
       <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Resources\shaders\FBX.hlsli">
+      <Filter>リソース ファイル</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +90,12 @@
     </FxCompile>
     <FxCompile Include="Resources\shaders\OBJVS.hlsl">
       <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\FBXPS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\FBXVS.hlsl">
+      <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +124,15 @@
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="3d\FbxLoader.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Fbx_Object3d.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCamera.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>
