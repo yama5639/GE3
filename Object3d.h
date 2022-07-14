@@ -8,6 +8,7 @@
 #include<string>
 #include"Model.h"
 
+
 /// 3Dオブジェクト
 class Object3d
 {

@@ -16,7 +16,7 @@ private: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-public: // サブクラス
+public:
 	struct VertexPosUv
 	{
 		XMFLOAT3 pos; // xyz座標

@@ -28,9 +28,10 @@ public:
 	void ParseMeshFaces(Fbx_Model* model, FbxMesh* fbxMesh);
 	void ParseMaterial(Fbx_Model* model, FbxNode* fbxNode);
 	void LoadTexture(Fbx_Model* model, const std::string& fullpath);
+	void ParseSkin(Fbx_Model* model, FbxMesh* fbxMesh);
 
 	std::string ExtractFileName(const std::string& path);
-
+	static void ConvertMatrixFromFbx(DirectX::XMMATRIX* dst, const FbxAMatrix& src);
 private:
 	// privateなコンストラクタ（シングルトンパターン）
 	FbxLoader() = default;
@@ -46,4 +47,5 @@ private:
 public:
 	static const string baseDirectory;
 	static const string defaultTextureFileName;
+	
 };

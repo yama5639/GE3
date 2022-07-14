@@ -120,6 +120,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //}
 #pragma endregion
 
+    /*int alive = 1;
+    int scene;
+    int key = 0;
+    int stage2;
+    int goal = 0;
+    int False;*/
+
     while (true)  // ゲームループ
     {
 
@@ -149,7 +156,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_1->SetPosition({ Player_Pos });
         objsquare_2->SetModel(modelsquare_1);
         objsquare_3->SetModel(modelsquare_1);
-
+        
         if (input->TriggerKey(DIK_0)) {
             OutputDebugStringA("Hit 0\n");
         }
@@ -159,8 +166,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             // spaceでモデル切り替え
             // 画面クリアカラーの数値を書き換える
             clearColor[1] = 1.0f;
-            /*objsquare_2->SetModel(modelsquare_2);
-            objsquare_3->SetModel(modelsquare_2);*/
+            objsquare_2->SetModel(modelsquare_2);
+            objsquare_3->SetModel(modelsquare_2);
             
             //自由落下フラグ
             fallF = 1;
@@ -185,6 +192,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             //Player_Pos.y += vy;
             Player_Pos.y -= g * time * time / 2.0f;
         }
+
+        ////プレイヤー生存
+        //if (alive == False) return;
+        ////鍵持っている
+        //if (key == False) return;
+        //if (goal == False) return;
+        ////ステージ2へ
+        //scene = stage2;
 
         /*if (input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
             if (input->PushKey(DIK_D)) {

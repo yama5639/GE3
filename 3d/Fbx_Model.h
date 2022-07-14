@@ -41,10 +41,25 @@ private:
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
 
 public:
+	struct Bone
+	{
+		//名前
+		std::string name;
+		//初期化姿勢の逆行列
+		DirectX::XMMATRIX invInitialPose;
+		//クラスター（FBX側のボーン情報）
+		FbxCluster* fbxCluster;
+		//コンストラクタ
+		Bone(const std::string& name) {
+			this->name = name;
+		}
+	};
+	~Fbx_Model();
 	friend class FbxLoader;
 	void CreateBuffers(ID3D12Device* device);
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 	const XMMATRIX& GetModelTransform() { return meshNode->globalTransform; }
+	FbxScene* GetFbxScene() { return fbxScene; }
 
 private:
 	std::string name;
@@ -53,16 +68,24 @@ private:
 	DirectX::XMFLOAT3 diffuse = { 1, 1, 1 };
 	DirectX::TexMetadata metadata = {};
 	DirectX::ScratchImage scratchImg = {};
+	std::vector<Bone> bones;
 
 public:
-	struct VertexPosNormalUv {
+	static const int MAX_BONE_INDICES = 4;
+
+public:
+	struct VertexPosNormalUvSkin {
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT3 uv;
+		UINT boneIndex[MAX_BONE_INDICES];
+		float boneWeight[MAX_BONE_INDICES];
 	};
 
 	Node* meshNode = nullptr;
 	
-	std::vector<VertexPosNormalUv> vertices;
+	std::vector<VertexPosNormalUvSkin> vertices;
 	std::vector<unsigned short> indices;
+	std::vector<Bone>& GetBones() { return bones; }
+	FbxScene* fbxScene = nullptr;
 };
