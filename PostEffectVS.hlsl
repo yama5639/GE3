@@ -1,7 +1,7 @@
 #include"PostEffect.hlsli"
-Output main(float4 pos : POSITION, float2 uv : TEXCOORD)
+VSOutput main(float4 pos : POSITION, float2 uv : TEXCOORD)
 {
-	Output output;
+	VSOutput output;
 	output.svpos = pos;
 	output.uv = uv;
 	return output;
