@@ -25,6 +25,8 @@
 #include "Fbx_Object3d.h"
 #include "DebugCamera.h"
 
+#include "PostEffect.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -60,16 +62,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Fbx_Object3d* object1 = nullptr;
 
     FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
-    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("cube");
-
-    Camera* camera = nullptr;
-    camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
     Fbx_Object3d::SetDevice(dxCommon->GetDev());
-    Fbx_Object3d::SetCamera(camera);
-    camera->SetTarget({ 0,20,0 });
-    //camera->SetDistance(100.0f);
-
     Fbx_Object3d::CreateGraphicsPipeline();
+    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("boneTest");
+
+    DebugCamera* camera = nullptr;
+    camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
+    Fbx_Object3d::SetCamera(camera);
+    camera->SetTarget({ 0,2.5f,0 });
+    camera->SetDistance(8.0f);
+    camera->SetEye({ 0,0,0 });
 
     object1 = new Fbx_Object3d;
     object1->Initialize();
@@ -100,7 +102,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_3->Update();
 
     // テクスチャ読み込み
-    Sprite::LoadTexture(1, L"Resources/house.png");
+    Sprite::LoadTexture(1, L"Resources/background.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
     sprite = Sprite::Create(1, { 0.0f,0.0f });
@@ -126,6 +128,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     int stage2;
     int goal = 0;
     int False;*/
+
+    PostEffect* postEffect = nullptr;
+    Sprite::LoadTexture(100, L"Resources/white1x1.png");
+    postEffect = new PostEffect();
+    postEffect->Initialize();
 
     while (true)  // ゲームループ
     {
@@ -239,11 +246,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_1->Update();
         objsquare_2->Update();
         objsquare_3->Update();
+        if (input->PushKey(DIK_SPACE)) {
+            object1->PlayAnimation();
+        }
         object1->Update();
-
 #pragma region グラフィックスコマンド
-        
+
+        postEffect->PreDrawScene(dxCommon->GetCmdList());
+        //gameScene->Draw();
+        postEffect->PostDrawScene(dxCommon->GetCmdList());
+
         dxCommon->PreDraw();
+
+        postEffect->Draw(dxCommon->GetCmdList());
 
         // 3Dオブジェクト描画前処理
         Object3d::PreDraw(dxCommon->GetCmdList());
@@ -257,10 +272,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         
 #pragma region 前景スプライト描画
         // 前景スプライト描画前処理
-        Sprite::PreDraw(dxCommon->GetCmdList());
-        sprite->Draw();
-        // スプライト描画後処理
-        Sprite::PostDraw();
+        //Sprite::PreDraw(dxCommon->GetCmdList());
+        //sprite->Draw();
+        //// スプライト描画後処理
+        //Sprite::PostDraw();
 #pragma endregion
         // ４．描画コマンドここまで
         dxCommon->PostDraw();
@@ -285,8 +300,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     delete objsquare_2;
     delete objsquare_3;
 
-    delete(object1);
-    delete(model1);
-
+    delete object1;
+    //delete model1;
+    delete postEffect;
     return 0;
 }

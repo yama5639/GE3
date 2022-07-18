@@ -36,7 +36,7 @@ public: // 静的メンバ関数
 	static void PostDraw();
 	static Sprite* Create(UINT texNumber, XMFLOAT2 position, XMFLOAT4 color = { 1, 1, 1, 1 }, XMFLOAT2 anchorpoint = { 0.0f, 0.0f }, bool isFlipX = false, bool isFlipY = false);
 
-private: // 静的メンバ変数
+protected: // 静的メンバ変数
 	// テクスチャの最大枚数
 	static const int srvCount = 512;
 	// 頂点数
@@ -67,7 +67,7 @@ public: // メンバ関数
 	void SetTextureRect(XMFLOAT2 texBase, XMFLOAT2 texSize);
 	void Draw();
 
-private: // メンバ変数
+protected: // メンバ変数
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
 	// 定数バッファ
@@ -100,4 +100,3 @@ private: // メンバ変数
 private: // メンバ関数
 	void TransferVertices();
 };
-

@@ -28,11 +28,21 @@ void Fbx_Object3d::Initialize() {
 	result = device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataTransform) + 0xff) & ~0xff),
+		&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffSkin)
 	);
+
+	////定数バッファへデータ転送
+	//ConstBufferDataSkin* constMapSkin = nullptr;
+	//result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
+	//for (int i = 0; i < MAX_BONES; i++) {
+	//	constMapSkin->bones[i] = XMMatrixIdentity();
+	//}
+	//constBuffSkin->Unmap(0, nullptr);
+
+
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);
 }
 
@@ -220,6 +230,15 @@ void Fbx_Object3d::Update() {
 	//カメラ座標
 	const XMFLOAT3& cameraPos = camera->GetEye();
 
+	if (isPlay) {
+		//1フレーム進める
+		currentTime += frameTime;
+		//最後まで再生したら先頭に戻す
+		if (currentTime > endTime) {
+			currentTime = startTime;
+		}
+	}
+
 	HRESULT result;
 	//定数バッファへのデータ転送
 	ConstBufferDataTransform* constMap = nullptr;
@@ -232,15 +251,6 @@ void Fbx_Object3d::Update() {
 	}
 
 	std::vector<Fbx_Model::Bone>& bones = model->GetBones();
-
-	if (isPlay) {
-		//1フレーム進める
-		currentTime += frameTime;
-		//最後まで再生したら先頭に戻す
-		if (currentTime > endTime) {
-			currentTime = startTime;
-		}
-	}
 
 	ConstBufferDataSkin* constMapSkin = nullptr;
 	result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
