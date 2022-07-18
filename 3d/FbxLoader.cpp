@@ -342,14 +342,14 @@ void FbxLoader::ParseSkin(Fbx_Model* model, FbxMesh* fbxMesh)
                         return lhs.weight > rhs.weight;
                     });
 
-                int weightArrrayIndex = 0;
+                int weightArrayIndex = 0;
                
                 for (auto& WeightSet : weightList) {
                    
-                    vertices[i].boneIndex[weightArrrayIndex] = WeightSet.index;
-                    vertices[i].boneWeight[weightArrrayIndex] = WeightSet.weight;
+                    vertices[i].boneIndex[weightArrayIndex] = WeightSet.index;
+                    vertices[i].boneWeight[weightArrayIndex] = WeightSet.weight;
                    
-                    if (++weightArrrayIndex >= Fbx_Model::MAX_BONE_INDICES) {
+                    if (++weightArrayIndex >= Fbx_Model::MAX_BONE_INDICES) {
                         float weight = 0.0f;
                         
                         for (int j = 1; j < Fbx_Model::MAX_BONE_INDICES; j++) {

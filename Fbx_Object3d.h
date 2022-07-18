@@ -45,17 +45,18 @@ public:
 	void Initialize();
 	void Update();
 	void SetModel(Fbx_Model* model) { this -> model = model; }
+	void SetRotation(XMFLOAT3 rota) { this->rotation = rota; }
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 	void PlayAnimation();
 protected:
 	ComPtr<ID3D12Resource> constBuffTransform;
 	ComPtr<ID3D12Resource> constBuffSkin;
 	//スケール
-	XMFLOAT3 scale = { 0.01f,0.01f,0.01f };
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
 	//回転
-	XMFLOAT3 rotation = { 0, 0, 0 };
+	XMFLOAT3 rotation = { 0, 90, 0 };
 	//座標
-	XMFLOAT3 position = { 0, 0, 0 };
+	XMFLOAT3 position = { 0, 0, 1 };
 	//ワールド変換行列
 	XMMATRIX matWorld;
 	//モデル
@@ -70,5 +71,4 @@ protected:
 	FbxTime currentTime;
 	//アニメーション再生中
 	bool isPlay = false;
-
 };

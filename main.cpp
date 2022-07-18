@@ -25,6 +25,8 @@
 #include "Fbx_Object3d.h"
 #include "DebugCamera.h"
 
+#include "PostEffect.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -47,9 +49,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     dxCommon = new DirectXCommon();
     dxCommon->Initialize(winApp);
 
-    Input* input = nullptr;
-    input = new Input();
-    input->Initialize(winApp);
+
+    /*Input* input = nullptr;
+    input = Input :: GetInstance();
+    input->Initialize(winApp);*/
+    Input::GetInstance()->Initialize(winApp);
+
 
     Object3d::StaticInitialize(dxCommon->GetDev(),winApp->window_width,winApp->window_height);
 
@@ -60,16 +65,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Fbx_Object3d* object1 = nullptr;
 
     FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
-    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("cube");
-
-    Camera* camera = nullptr;
-    camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
     Fbx_Object3d::SetDevice(dxCommon->GetDev());
-    Fbx_Object3d::SetCamera(camera);
-    camera->SetTarget({ 0,20,0 });
-    //camera->SetDistance(100.0f);
-
     Fbx_Object3d::CreateGraphicsPipeline();
+    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("boneTest");
+
+    DebugCamera* camera = nullptr;
+    camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
+    Fbx_Object3d::SetCamera(camera);
+    camera->SetTarget({ 0,2.5f,0 });
+    camera->SetDistance(8.0f);
+    camera->SetEye({ 0,0,0 });
 
     object1 = new Fbx_Object3d;
     object1->Initialize();
@@ -100,7 +105,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_3->Update();
 
     // テクスチャ読み込み
-    Sprite::LoadTexture(1, L"Resources/house.png");
+    Sprite::LoadTexture(1, L"Resources/background.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
     sprite = Sprite::Create(1, { 0.0f,0.0f });
@@ -127,6 +132,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     int goal = 0;
     int False;*/
 
+    PostEffect* postEffect = nullptr;
+    //Sprite::LoadTexture(100, L"Resources/white1x1.png");
+    postEffect = new PostEffect();
+    postEffect->Initialize();
+
     while (true)  // ゲームループ
     {
 
@@ -138,8 +148,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region DirectX毎フレーム処理
         // DirectX毎フレーム処理　ここから
-
-        input->Update();
+        Input::GetInstance()->Update();
+        //input->Update();
         float clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
         const int cycle = 540; // 繰り返しの周期
         counter++;
@@ -157,33 +167,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_2->SetModel(modelsquare_1);
         objsquare_3->SetModel(modelsquare_1);
         
-        if (input->TriggerKey(DIK_0)) {
+        /*if (input->TriggerKey(DIK_0)) {
             OutputDebugStringA("Hit 0\n");
-        }
+        }*/
 
-        //スペースキー押したら
-        if (input->PushKey(DIK_SPACE)) {
-            // spaceでモデル切り替え
-            // 画面クリアカラーの数値を書き換える
-            clearColor[1] = 1.0f;
-            objsquare_2->SetModel(modelsquare_2);
-            objsquare_3->SetModel(modelsquare_2);
-            
-            //自由落下フラグ
-            fallF = 1;
-        }
+        ////スペースキー押したら
+        //if (input->PushKey(DIK_SPACE)) {
+        //    // spaceでモデル切り替え
+        //    // 画面クリアカラーの数値を書き換える
+        //    clearColor[1] = 1.0f;
+        //    objsquare_2->SetModel(modelsquare_2);
+        //    objsquare_3->SetModel(modelsquare_2);
+        //    
+        //    //自由落下フラグ
+        //    fallF = 1;
+        //}
 
-        //リセット
-        if (input->PushKey(DIK_R)) {
-            Player_Pos.y = +100;
-            fallF = 0;
-            time = 0.2f;
-        }
+        ////リセット
+        //if (input->PushKey(DIK_R)) {
+        //    Player_Pos.y = +100;
+        //    fallF = 0;
+        //    time = 0.2f;
+        //}
 
-        // 座標操作
-        if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
-            //操作記入欄
-        }
+        //// 座標操作
+        //if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
+        //    //操作記入欄
+        //}
+
 
         //自由落下
         if (fallF == 1) {
@@ -236,31 +247,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         // DirectX毎フレーム処理　ここまで
 #pragma endregion DirectX毎フレーム処理
+        
         objsquare_1->Update();
         objsquare_2->Update();
         objsquare_3->Update();
+        if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+            object1->PlayAnimation();
+        }
         object1->Update();
-
 #pragma region グラフィックスコマンド
-        
+
+        postEffect->PreDrawScene(dxCommon->GetCmdList());
+        //gameScene->Draw();
+        Object3d::PreDraw(dxCommon->GetCmdList());
+        object1->Draw(dxCommon->GetCmdList());
+        Object3d::PostDraw();
+        postEffect->PostDrawScene(dxCommon->GetCmdList());
+
         dxCommon->PreDraw();
 
+       
+
         // 3Dオブジェクト描画前処理
-        Object3d::PreDraw(dxCommon->GetCmdList());
+       
         // 3Dオブクジェクトの描画
-        objsquare_1->Draw();
-        objsquare_2->Draw();
-        objsquare_3->Draw();
-        object1->Draw(dxCommon->GetCmdList());
+        //objsquare_1->Draw();
+        //objsquare_2->Draw();
+        //objsquare_3->Draw();
+       
         // 3Dオブジェクト描画後処理
-        Object3d::PostDraw();
         
+        postEffect->Draw(dxCommon->GetCmdList());
 #pragma region 前景スプライト描画
         // 前景スプライト描画前処理
-        Sprite::PreDraw(dxCommon->GetCmdList());
-        sprite->Draw();
-        // スプライト描画後処理
-        Sprite::PostDraw();
+        //Sprite::PreDraw(dxCommon->GetCmdList());
+        //sprite->Draw();
+        //// スプライト描画後処理
+        //Sprite::PostDraw();
 #pragma endregion
         // ４．描画コマンドここまで
         dxCommon->PostDraw();
@@ -275,7 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region WindowsAPI後始末
     winApp->Finalize();
 #pragma endregion WindowsAPI後始末
-    delete input;
+   
     delete winApp;
 
     delete modelsquare_1;
@@ -285,8 +308,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     delete objsquare_2;
     delete objsquare_3;
 
-    delete(object1);
-    delete(model1);
-
+    delete object1;
+    //delete model1;
+    delete postEffect;
     return 0;
 }
