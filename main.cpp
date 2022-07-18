@@ -49,9 +49,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     dxCommon = new DirectXCommon();
     dxCommon->Initialize(winApp);
 
-    Input* input = nullptr;
-    input = new Input();
-    input->Initialize(winApp);
+
+    /*Input* input = nullptr;
+    input = Input :: GetInstance();
+    input->Initialize(winApp);*/
+    Input::GetInstance()->Initialize(winApp);
+
 
     Object3d::StaticInitialize(dxCommon->GetDev(),winApp->window_width,winApp->window_height);
 
@@ -130,7 +133,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     int False;*/
 
     PostEffect* postEffect = nullptr;
-    Sprite::LoadTexture(100, L"Resources/white1x1.png");
+    //Sprite::LoadTexture(100, L"Resources/white1x1.png");
     postEffect = new PostEffect();
     postEffect->Initialize();
 
@@ -145,8 +148,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 #pragma region DirectX毎フレーム処理
         // DirectX毎フレーム処理　ここから
-
-        input->Update();
+        Input::GetInstance()->Update();
+        //input->Update();
         float clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
         const int cycle = 540; // 繰り返しの周期
         counter++;
@@ -164,33 +167,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_2->SetModel(modelsquare_1);
         objsquare_3->SetModel(modelsquare_1);
         
-        if (input->TriggerKey(DIK_0)) {
+        /*if (input->TriggerKey(DIK_0)) {
             OutputDebugStringA("Hit 0\n");
-        }
+        }*/
 
-        //スペースキー押したら
-        if (input->PushKey(DIK_SPACE)) {
-            // spaceでモデル切り替え
-            // 画面クリアカラーの数値を書き換える
-            clearColor[1] = 1.0f;
-            objsquare_2->SetModel(modelsquare_2);
-            objsquare_3->SetModel(modelsquare_2);
-            
-            //自由落下フラグ
-            fallF = 1;
-        }
+        ////スペースキー押したら
+        //if (input->PushKey(DIK_SPACE)) {
+        //    // spaceでモデル切り替え
+        //    // 画面クリアカラーの数値を書き換える
+        //    clearColor[1] = 1.0f;
+        //    objsquare_2->SetModel(modelsquare_2);
+        //    objsquare_3->SetModel(modelsquare_2);
+        //    
+        //    //自由落下フラグ
+        //    fallF = 1;
+        //}
 
-        //リセット
-        if (input->PushKey(DIK_R)) {
-            Player_Pos.y = +100;
-            fallF = 0;
-            time = 0.2f;
-        }
+        ////リセット
+        //if (input->PushKey(DIK_R)) {
+        //    Player_Pos.y = +100;
+        //    fallF = 0;
+        //    time = 0.2f;
+        //}
 
-        // 座標操作
-        if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
-            //操作記入欄
-        }
+        //// 座標操作
+        //if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
+        //    //操作記入欄
+        //}
+
 
         //自由落下
         if (fallF == 1) {
@@ -243,10 +247,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         // DirectX毎フレーム処理　ここまで
 #pragma endregion DirectX毎フレーム処理
+        
         objsquare_1->Update();
         objsquare_2->Update();
         objsquare_3->Update();
-        if (input->PushKey(DIK_SPACE)) {
+        if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
             object1->PlayAnimation();
         }
         object1->Update();
@@ -254,22 +259,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         postEffect->PreDrawScene(dxCommon->GetCmdList());
         //gameScene->Draw();
+        Object3d::PreDraw(dxCommon->GetCmdList());
+        object1->Draw(dxCommon->GetCmdList());
+        Object3d::PostDraw();
         postEffect->PostDrawScene(dxCommon->GetCmdList());
 
         dxCommon->PreDraw();
 
-        postEffect->Draw(dxCommon->GetCmdList());
+       
 
         // 3Dオブジェクト描画前処理
-        Object3d::PreDraw(dxCommon->GetCmdList());
+       
         // 3Dオブクジェクトの描画
-        objsquare_1->Draw();
-        objsquare_2->Draw();
-        objsquare_3->Draw();
-        object1->Draw(dxCommon->GetCmdList());
+        //objsquare_1->Draw();
+        //objsquare_2->Draw();
+        //objsquare_3->Draw();
+       
         // 3Dオブジェクト描画後処理
-        Object3d::PostDraw();
         
+        postEffect->Draw(dxCommon->GetCmdList());
 #pragma region 前景スプライト描画
         // 前景スプライト描画前処理
         //Sprite::PreDraw(dxCommon->GetCmdList());
@@ -290,7 +298,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region WindowsAPI後始末
     winApp->Finalize();
 #pragma endregion WindowsAPI後始末
-    delete input;
+   
     delete winApp;
 
     delete modelsquare_1;

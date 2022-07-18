@@ -6,6 +6,8 @@
 #include <dinput.h>
 #include "WinApp.h"
 
+using namespace Microsoft::WRL;
+
 //“ü—Í
 class Input
 {
@@ -14,6 +16,7 @@ public:
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public://ƒƒ“ƒoŠÖ”
+	static Input* GetInstance();
 	//‰Šú‰»
 	void Initialize(WinApp* winApp);
 
