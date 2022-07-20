@@ -52,7 +52,7 @@ protected:
 	ComPtr<ID3D12Resource> constBuffTransform;
 	ComPtr<ID3D12Resource> constBuffSkin;
 	//スケール
-	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+	XMFLOAT3 scale = { 1.5f,1.5f,1.5f };
 	//回転
 	XMFLOAT3 rotation = { 0, 90, 0 };
 	//座標
