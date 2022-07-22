@@ -67,7 +67,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
     Fbx_Object3d::SetDevice(dxCommon->GetDev());
     Fbx_Object3d::CreateGraphicsPipeline();
-    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("boneTest");
+    model1 = FbxLoader::GetInstance()->LoadModaleFromFile("shark");
 
     DebugCamera* camera = nullptr;
     camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
@@ -75,20 +75,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     camera->SetTarget({ 0,2.5f,0 });
     camera->SetDistance(8.0f);
     camera->SetEye({ 0,0,0 });
+    camera->GetEye();
+    camera->GetTarget();
+    XMFLOAT3 eye = { 0,0,-20 };
 
     object1 = new Fbx_Object3d;
     object1->Initialize();
     object1->SetModel(model1);
-
-    float time = 0;
-    int fallF = 0;
-    float g = 9.8f;
-    float vy = 0.0f;
+    XMFLOAT3 position = { 0,-7,0 };
 
 #pragma region 描画初期化処理
     XMFLOAT3 Player_Pos = { 0,+100,0 };
     XMFLOAT3 Player_Scl = { 3,3,3 };
-    Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
+    Model* modelsquare_1 = Model::LoadFromOBJ("airplane");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
     Object3d* objsquare_1 = Object3d::Create();
     Object3d* objsquare_2 = Object3d::Create();
@@ -105,12 +104,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_3->Update();
 
     // テクスチャ読み込み
-    Sprite::LoadTexture(1, L"Resources/background.png");
+    Sprite::LoadTexture(1, L"Resources/reticle.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
-    sprite = Sprite::Create(1, { 0.0f,0.0f });
+    sprite = Sprite::Create(1, { 550.0f,300.0f });
     //sprite->SetTextureRect();
-
+    XMFLOAT2 sppos = sprite->GetPosition();
 #pragma endregion 描画初期化処理
 
     int counter = 0; // アニメーションの経過時間カウンター
@@ -124,13 +123,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //    return 1;
     //}
 #pragma endregion
-
-    /*int alive = 1;
-    int scene;
-    int key = 0;
-    int stage2;
-    int goal = 0;
-    int False;*/
 
     PostEffect* postEffect = nullptr;
     //Sprite::LoadTexture(100, L"Resources/white1x1.png");
@@ -155,63 +147,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         counter++;
         counter %= cycle; // 周期を超えたら0に戻る
         float scale = (float)counter / cycle; // [0,1]の数値
+        LONG u_r = 32768;
+        LONG a = 30000;
+       
 
-        //const int cycle = 60; // 繰り返しの周期
-        //counter++;
-        //float scale = sinf(XM_2PI * (float)counter / cycle); // [-1,+1]の数値
-        //scale += 1.0f; // [0,+2]の数値
-        //scale /= 2.0f; // [0,+1]の数値
         scale *= 360.0f;
 
         objsquare_1->SetPosition({ Player_Pos });
         objsquare_2->SetModel(modelsquare_1);
-        objsquare_3->SetModel(modelsquare_1);
+        object1->SetPosition({ position });
+        sprite->SetPosition(sppos);
         
-        /*if (input->TriggerKey(DIK_0)) {
-            OutputDebugStringA("Hit 0\n");
-        }*/
-
-        ////スペースキー押したら
-        //if (input->PushKey(DIK_SPACE)) {
-        //    // spaceでモデル切り替え
-        //    // 画面クリアカラーの数値を書き換える
-        //    clearColor[1] = 1.0f;
-        //    objsquare_2->SetModel(modelsquare_2);
-        //    objsquare_3->SetModel(modelsquare_2);
-        //    
-        //    //自由落下フラグ
-        //    fallF = 1;
-        //}
-
-        ////リセット
-        //if (input->PushKey(DIK_R)) {
-        //    Player_Pos.y = +100;
-        //    fallF = 0;
-        //    time = 0.2f;
-        //}
-
-        //// 座標操作
-        //if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
-        //    //操作記入欄
-        //}
-
-
-        //自由落下
-        if (fallF == 1) {
-            time += 0.03f;
-            //vy -= g;
-            //Player_Pos.y += vy;
-            Player_Pos.y -= g * time * time / 2.0f;
-        }
-
-        ////プレイヤー生存
-        //if (alive == False) return;
-        ////鍵持っている
-        //if (key == False) return;
-        //if (goal == False) return;
-        ////ステージ2へ
-        //scene = stage2;
-
         /*if (input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
             if (input->PushKey(DIK_D)) {
                 angle += XMConvertToRadians(1.0f);
@@ -251,39 +197,125 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_1->Update();
         objsquare_2->Update();
         objsquare_3->Update();
-        if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+
+        //コントローラー
+        //Lスティック
+        if (Input::GetInstance()->GetConMove().lX < u_r - a) {
+            position.x -= 0.1f;
+            sppos.x -= 5.0f;
+        }
+        else if (Input::GetInstance()->GetConMove().lX > u_r + a) {
+            position.x += 0.1f;
+            sppos.x += 5.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lY < u_r - a) {
+            position.y += 0.1f;
+            sppos.y -= 5.0f;
+        }
+        else if (Input::GetInstance()->GetConMove().lY > u_r + a) {
+            position.y -= 0.1f;
+            sppos.y += 5.0f;
+        }
+
+        if (Input::GetInstance()->GetConMove().lX < u_r - 1000 && Input::GetInstance()->GetConMove().lY < u_r - 1000) {
+            position.x -= 0.1f;
+            position.y += 0.1f;
+            sppos.x -= 5.0f;
+            sppos.y -= 5.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lX > u_r + 1000 && Input::GetInstance()->GetConMove().lY < u_r - 1000) {
+            position.x += 0.1f;
+            position.y += 0.1f;
+            sppos.x += 5.0f;
+            sppos.y -= 5.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lX < u_r - 1000 && Input::GetInstance()->GetConMove().lY > u_r + 1000) {
+            position.y += 0.1f;
+            position.y -= 0.1f;
+            sppos.y -= 5.0f;
+            sppos.y += 5.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lX > u_r + 1000 && Input::GetInstance()->GetConMove().lY > u_r + 1000) {
+            position.x += 0.1f;
+            position.y -= 0.1f;
+            sppos.x += 5.0f;
+            sppos.y += 5.0f;
+        }
+
+        //Rスティック
+        /*if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
+            position.x = sppos.x;
+        }
+        else if (Input::GetInstance()->GetConMove().lRx > u_r + a) {
+            position.x = sppos.x;
+        }
+        if (Input::GetInstance()->GetConMove().lRy < u_r - a) {
+            position.y = sppos.y;
+        }
+        else if (Input::GetInstance()->GetConMove().lRy > u_r + a) {
+            sppos.y += 6.0f;
+        }
+
+        if (Input::GetInstance()->GetConMove().lRx < u_r - 1000 && Input::GetInstance()->GetConMove().lRy < u_r - 1000) {
+            sppos.x -= 6.0f;
+            sppos.y -= 6.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lRx > u_r + 1000 && Input::GetInstance()->GetConMove().lRy < u_r - 1000) {
+            sppos.x += 6.0f;
+            sppos.y -= 6.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lRx < u_r - 1000 && Input::GetInstance()->GetConMove().lRy > u_r + 1000) {
+            sppos.y -= 6.0f;
+            sppos.y += 6.0f;
+        }
+        if (Input::GetInstance()->GetConMove().lRx > u_r + 1000 && Input::GetInstance()->GetConMove().lRy > u_r + 1000) {
+            sppos.x += 6.0f;
+            sppos.y += 6.0f;
+        }*/
+
+        //Bボタン
+        if (Input::GetInstance()->TriggerButtonB()) {
             object1->PlayAnimation();
         }
+
+        //Rボタン
+        if (Input::GetInstance()->TriggerButtonRB()) {
+            
+        }
+
         object1->Update();
 #pragma region グラフィックスコマンド
 
-        postEffect->PreDrawScene(dxCommon->GetCmdList());
+        //postEffect->PreDrawScene(dxCommon->GetCmdList());
         //gameScene->Draw();
-        Object3d::PreDraw(dxCommon->GetCmdList());
-        object1->Draw(dxCommon->GetCmdList());
-        Object3d::PostDraw();
-        postEffect->PostDrawScene(dxCommon->GetCmdList());
-
+        //Object3d::PreDraw(dxCommon->GetCmdList());
+        ////objsquare_1->Draw();
+        //object1->Draw(dxCommon->GetCmdList());
+        //Object3d::PostDraw();
+        //postEffect->PostDrawScene(dxCommon->GetCmdList());
+        
         dxCommon->PreDraw();
-
-       
 
         // 3Dオブジェクト描画前処理
        
         // 3Dオブクジェクトの描画
-        //objsquare_1->Draw();
+     
         //objsquare_2->Draw();
         //objsquare_3->Draw();
        
         // 3Dオブジェクト描画後処理
-        
-        postEffect->Draw(dxCommon->GetCmdList());
+        Object3d::PreDraw(dxCommon->GetCmdList());
+        //objsquare_1->Draw();
+        object1->Draw(dxCommon->GetCmdList());
+        Object3d::PostDraw();
+        //postEffect->Draw(dxCommon->GetCmdList());
+
 #pragma region 前景スプライト描画
-        // 前景スプライト描画前処理
-        //Sprite::PreDraw(dxCommon->GetCmdList());
-        //sprite->Draw();
+        //前景スプライト描画前処理
+        Sprite::PreDraw(dxCommon->GetCmdList());
+        sprite->Draw();
         //// スプライト描画後処理
-        //Sprite::PostDraw();
+        Sprite::PostDraw();
 #pragma endregion
         // ４．描画コマンドここまで
         dxCommon->PostDraw();
@@ -309,7 +341,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     delete objsquare_3;
 
     delete object1;
-    //delete model1;
     delete postEffect;
     return 0;
 }

@@ -34,13 +34,13 @@ void Fbx_Object3d::Initialize() {
 		IID_PPV_ARGS(&constBuffSkin)
 	);
 
-	////定数バッファへデータ転送
-	//ConstBufferDataSkin* constMapSkin = nullptr;
-	//result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
-	//for (int i = 0; i < MAX_BONES; i++) {
-	//	constMapSkin->bones[i] = XMMatrixIdentity();
-	//}
-	//constBuffSkin->Unmap(0, nullptr);
+	//定数バッファへデータ転送
+	ConstBufferDataSkin* constMapSkin = nullptr;
+	result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
+	for (int i = 0; i < MAX_BONES; i++) {
+		constMapSkin->bones[i] = XMMatrixIdentity();
+	}
+	constBuffSkin->Unmap(0, nullptr);
 
 
 	frameTime.SetTime(0, 0, 0, 1, 0, FbxTime::EMode::eFrames60);

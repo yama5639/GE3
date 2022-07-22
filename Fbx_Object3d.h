@@ -48,13 +48,17 @@ public:
 	void SetRotation(XMFLOAT3 rota) { this->rotation = rota; }
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 	void PlayAnimation();
+	XMFLOAT3 GetPosition() { return position; }
+	XMFLOAT3 GetRotation() { return rotation; }
+	void SetPosition(XMFLOAT3 pos) { position = pos; }
+	void SetScale(XMFLOAT3 scl) { scale = scl; }
 protected:
 	ComPtr<ID3D12Resource> constBuffTransform;
 	ComPtr<ID3D12Resource> constBuffSkin;
 	//スケール
-	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+	XMFLOAT3 scale = { 0.01f,0.01f,0.01f };
 	//回転
-	XMFLOAT3 rotation = { 0, 90, 0 };
+	XMFLOAT3 rotation = { 0, 180, 0 };
 	//座標
 	XMFLOAT3 position = { 0, 0, 1 };
 	//ワールド変換行列

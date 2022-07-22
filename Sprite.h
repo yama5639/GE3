@@ -60,6 +60,7 @@ protected: // Ã“Iƒƒ“ƒo•Ï”
 
 public: // ƒƒ“ƒoŠÖ”
 	Sprite(UINT texNumber, XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
+	const XMFLOAT2& GetPosition() { return position; }
 	bool Initialize();
 	void SetRotation(float rotation);
 	void SetPosition(XMFLOAT2 position);

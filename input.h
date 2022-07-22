@@ -12,11 +12,21 @@ using namespace Microsoft::WRL;
 class Input
 {
 public:
+	static Input* GetInstance();
 	//namespace省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public://メンバ関数
-	static Input* GetInstance();
+	struct ConMove {
+		LONG    lX;
+		LONG    lY;
+		LONG    lZ;
+		LONG    lRx;
+		LONG    lRy;
+		LONG    lRz;
+		BYTE    rgbButtons[32];
+	};
+
 	//初期化
 	void Initialize(WinApp* winApp);
 
@@ -37,6 +47,16 @@ public://メンバ関数
 	/// <returns>トリガーか</return>
 	bool TriggerKey(BYTE keyNumber);
 
+	//コントローラー
+	bool TriggerButtonA();
+	bool TriggerButtonB();
+	bool TriggerButonX();
+	bool TriggerButonY();
+	bool TriggerButtonRB();
+	bool TriggerButtonLB();
+	bool PushButtonA();
+	ConMove GetConMove();
+
 private://メンバ関数
 	//キーボードのデバイス
 	ComPtr<IDirectInputDevice8> devkeyboard;
@@ -46,6 +66,11 @@ private://メンバ関数
 	BYTE key[256] = {};
 	//前回の全キーの状態
 	BYTE keyPre[256] = {};
+
+	//コントローラー
+	ComPtr<IDirectInputDevice8> devCon;
+	DIJOYSTATE2 ConState = {};
+	DIJOYSTATE2 ConStatePre = {};
 
 	WinApp* winApp = nullptr;
 };
