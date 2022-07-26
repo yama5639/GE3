@@ -87,7 +87,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region 描画初期化処理
     XMFLOAT3 Player_Pos = { 0,+100,0 };
     XMFLOAT3 Player_Scl = { 3,3,3 };
-    Model* modelsquare_1 = Model::LoadFromOBJ("airplane");
+    Model* modelsquare_1 = Model::LoadFromOBJ("block1");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
     Object3d* objsquare_1 = Object3d::Create();
     Object3d* objsquare_2 = Object3d::Create();
@@ -242,6 +242,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             sppos.y += 5.0f;
         }
 
+
         //Rスティック
         /*if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
             position.x = sppos.x;
@@ -305,7 +306,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
        
         // 3Dオブジェクト描画後処理
         Object3d::PreDraw(dxCommon->GetCmdList());
-        //objsquare_1->Draw();
+        objsquare_1->Draw();
         object1->Draw(dxCommon->GetCmdList());
         Object3d::PostDraw();
         //postEffect->Draw(dxCommon->GetCmdList());
