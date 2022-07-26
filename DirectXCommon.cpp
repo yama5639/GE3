@@ -76,9 +76,18 @@ void DirectXCommon::InitializeDevice() {
     ComPtr<ID3D12Debug> debugController;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
         debugController->EnableDebugLayer();
+        debugController->SetEnableGPUBasedValidation(TRUE);
     }
 #endif
 
+#ifdef  _DEBUG
+    ID3D12InfoQueue* infoQueue;
+    if (SUCCEEDED(dev->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+        infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+        infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+        infoQueue->Release();
+    }
+#endif //  _DEBUG
     HRESULT result;
     result = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
     // アダプターの列挙用

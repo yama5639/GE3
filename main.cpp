@@ -27,11 +27,26 @@
 
 #include "PostEffect.h"
 
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <cassert>
+
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"dxgi.lib")
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
+#ifdef  _DEBUG
+    ID3D12Debug1* debugController;
+    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+        debugController->EnableDebugLayer();
+        debugController->SetEnableGPUBasedValidation(TRUE);
+    }
+#endif //  _DEBUG
+
     //FbxManager* fbxManager = FbxManager::Create();
 #pragma region WindowsAPI初期化
     WinApp* winApp = nullptr;
