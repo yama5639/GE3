@@ -26,9 +26,11 @@
 #include "DebugCamera.h"
 
 #include "PostEffect.h"
+#include "Safedelete.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
+
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -85,35 +87,58 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     XMFLOAT3 position = { 0,-7,0 };
 
 #pragma region 描画初期化処理
-    XMFLOAT3 Player_Pos = { 0,+100,0 };
-    XMFLOAT3 Player_Scl = { 3,3,3 };
-    Model* modelsquare_1 = Model::LoadFromOBJ("block1");
+    XMFLOAT3 Player_Scl = { 6,6,6 };
+    XMFLOAT3 Player_Scl4 = { 5,5,5 };
+    Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
+   
     Object3d* objsquare_1 = Object3d::Create();
     Object3d* objsquare_2 = Object3d::Create();
     Object3d* objsquare_3 = Object3d::Create();
+    Object3d* objsquare_4 = Object3d::Create();
+    XMFLOAT3 Player_Pos1 = { 0,0,-50 };
+    XMFLOAT3 Player_Pos2 = { -50,0,-50 };
+    XMFLOAT3 Player_Pos3 = { +50,0,-50 };
+    XMFLOAT3 Player_Pos4 = {    50,  50,-180};
     objsquare_1->SetModel(modelsquare_1);
     objsquare_2->SetModel(modelsquare_1);
     objsquare_3->SetModel(modelsquare_1);
+    objsquare_4->SetModel(modelsquare_2);
 
     objsquare_1->SetScale({ Player_Scl });
-    objsquare_2->SetPosition({ -100,0,-10 });
-    objsquare_3->SetPosition({ +100,0,-10 });
-    objsquare_1->Update();
+    objsquare_2->SetScale({ Player_Scl });
+    objsquare_3->SetScale({ Player_Scl });
+    objsquare_4->SetScale({ Player_Scl4 });
+    /*objsquare_1->Update();
     objsquare_2->Update();
     objsquare_3->Update();
+    objsquare_4->Update();*/
 
     // テクスチャ読み込み
     Sprite::LoadTexture(1, L"Resources/reticle.png");
+    Sprite::LoadTexture(2, L"Resources/title.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
+    Sprite* sprite1 = nullptr;
     sprite = Sprite::Create(1, { 550.0f,300.0f });
+    sprite1 = Sprite::Create(2, { 0.0f,0.0f });
     //sprite->SetTextureRect();
     XMFLOAT2 sppos = sprite->GetPosition();
+
 #pragma endregion 描画初期化処理
 
     int counter = 0; // アニメーションの経過時間カウンター
-
+    int tf = 0;
+    int scene = 0;
+    int enemyf1 = 1;
+    int enemyf2 = 1;
+    int enemyf3 = 1;
+    int bulletr = 10;
+    int ener = 10;
+    float length1;
+    float length2;
+    float length3;
+    int timer = 100;
 #pragma region//オーディオ
     ////オーディオ
     //const int AudioMax = 1;
@@ -153,8 +178,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         scale *= 360.0f;
 
-        objsquare_1->SetPosition({ Player_Pos });
-        objsquare_2->SetModel(modelsquare_1);
+        objsquare_1->SetPosition({ Player_Pos1 });
+        objsquare_2->SetPosition({ Player_Pos2 });
+        objsquare_3->SetPosition({ Player_Pos3 });
+        objsquare_4->SetPosition({ Player_Pos4 });
         object1->SetPosition({ position });
         sprite->SetPosition(sppos);
         
@@ -197,10 +224,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_1->Update();
         objsquare_2->Update();
         objsquare_3->Update();
+        objsquare_4->Update();
+        object1->Update();
 
+        //キーボード操作
+        if (Input::GetInstance()->PushKey(DIK_A)) {
+            position.x -= 0.1f;
+        }
+        if (Input::GetInstance()->PushKey(DIK_S)) {
+            position.y -= 0.1f;
+        }
+        if (Input::GetInstance()->PushKey(DIK_D)) {
+            position.x += 0.1f;
+        }
+        if (Input::GetInstance()->PushKey(DIK_W)) {
+            position.y += 0.1f;
+        }
+        if (scene == 0) {
+            if (Input::GetInstance()->PushKey(DIK_RETURN)) {
+                scene = 1;
+            }
+        }
+        if (scene == 1) {
+            if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+                tf = 1;
+            }
+        }
+        Player_Pos4.x = position.x;
+        Player_Pos4.y = position.y;
+        
         //コントローラー
         //Lスティック
-        if (Input::GetInstance()->GetConMove().lX < u_r - a) {
+       /* if (Input::GetInstance()->GetConMove().lX < u_r - a) {
             position.x -= 0.1f;
             sppos.x -= 5.0f;
         }
@@ -240,9 +295,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             position.y -= 0.1f;
             sppos.x += 5.0f;
             sppos.y += 5.0f;
-        }
+        }*/
 
-
+       
         //Rスティック
         /*if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
             position.x = sppos.x;
@@ -279,12 +334,76 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             object1->PlayAnimation();
         }
 
-        //Rボタン
-        if (Input::GetInstance()->TriggerButtonRB()) {
-            
+       
+        if (tf == 0) {
+            //Rボタン
+            if (Input::GetInstance()->TriggerButtonRB()) {
+                tf = 1;
+            }
         }
 
-        object1->Update();
+        //弾と敵の衝突判定
+        if (tf == 1) {
+            if (enemyf1 == 1) {
+                length1 = sqrtf((Player_Pos1.x - Player_Pos4.x) * (Player_Pos1.x - Player_Pos4.x) + (Player_Pos1.y - Player_Pos4.y) * (Player_Pos1.y - Player_Pos4.y)) + (Player_Pos1.z - Player_Pos4.z) * (Player_Pos1.z - Player_Pos4.z);
+                if (length1 <= bulletr + ener) {
+                    tf = 0;
+                    enemyf1 = 0;
+                }
+            }
+            if (enemyf2 == 1) {
+                length2 = sqrtf((Player_Pos2.x - Player_Pos4.x) * (Player_Pos2.x - Player_Pos4.x) + (Player_Pos2.y - Player_Pos4.y) * (Player_Pos2.y - Player_Pos4.y)) + (Player_Pos2.z - Player_Pos4.z) * (Player_Pos2.z - Player_Pos4.z);
+                if (length2 <= bulletr + ener) {
+                    tf = 0;
+                    enemyf2 = 0;
+                }
+            }
+            if (enemyf3 == 1) {
+                length3 = sqrtf((Player_Pos3.x - Player_Pos4.x) * (Player_Pos3.x - Player_Pos4.x) + (Player_Pos3.y - Player_Pos4.y) * (Player_Pos3.y - Player_Pos4.y)) + (Player_Pos3.z - Player_Pos4.z) * (Player_Pos3.z - Player_Pos4.z);
+                if (length3 <= bulletr + ener) {
+                    tf = 0;
+                    enemyf3 = 0;
+                }
+            }
+        }
+
+        if (tf == 1) {
+            Player_Pos4.z++;
+            if (100 <= Player_Pos4.z) {
+                tf = 0;
+            }
+        }
+       
+        if (tf == 0) {
+            Player_Pos4.x = position.x;
+            Player_Pos4.y = position.y;
+            Player_Pos4.z = -180;
+        }
+        //リスポーン
+        if (enemyf1 == 0)
+        {
+            timer = timer - 1;
+            if (timer == 0) {
+                enemyf1 = 1;
+                timer = 100;
+            }
+        }
+        if (enemyf2 == 0)
+        {
+            timer = timer - 1;
+            if (timer == 0) {
+                enemyf2 = 1;
+                timer = 100;
+            }
+        }
+        if (enemyf3 == 0)
+        {
+            timer = timer - 1;
+            if (timer == 0) {
+                enemyf3 = 1;
+                timer = 100;
+            }
+        }
 #pragma region グラフィックスコマンド
 
         //postEffect->PreDrawScene(dxCommon->GetCmdList());
@@ -306,7 +425,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
        
         // 3Dオブジェクト描画後処理
         Object3d::PreDraw(dxCommon->GetCmdList());
-        objsquare_1->Draw();
+        if (enemyf1 == 1) {
+            objsquare_1->Draw();
+        }
+        if (enemyf2 == 1) {
+            objsquare_2->Draw();
+        }
+        if (enemyf3 == 1) {
+            objsquare_3->Draw();
+        }
+        if (tf == 1) {
+            objsquare_4->Draw();
+        }
         object1->Draw(dxCommon->GetCmdList());
         Object3d::PostDraw();
         //postEffect->Draw(dxCommon->GetCmdList());
@@ -314,7 +444,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region 前景スプライト描画
         //前景スプライト描画前処理
         Sprite::PreDraw(dxCommon->GetCmdList());
-        sprite->Draw();
+        //sprite->Draw();
+        if (scene == 0) {
+            sprite1->Draw();
+        }
         //// スプライト描画後処理
         Sprite::PostDraw();
 #pragma endregion
@@ -340,7 +473,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     delete objsquare_1;
     delete objsquare_2;
     delete objsquare_3;
-
+    delete objsquare_4;
     delete object1;
     delete postEffect;
     return 0;

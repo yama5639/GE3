@@ -266,6 +266,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object3d.h" />
     <ClInclude Include="PostEffect.h" />
+    <ClInclude Include="Safedelete.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="WinApp.h" />
   </ItemGroup>
