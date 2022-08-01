@@ -134,7 +134,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     int enemyf2 = 1;
     int enemyf3 = 1;
     int bulletr = 10;
-    int ener = 10;
+    int ener = 5;
     float length1;
     float length2;
     float length3;
