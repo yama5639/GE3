@@ -255,7 +255,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         
         //コントローラー
         //Lスティック
-       /* if (Input::GetInstance()->GetConMove().lX < u_r - a) {
+        if (Input::GetInstance()->GetConMove().lX < u_r - a) {
             position.x -= 0.1f;
             sppos.x -= 5.0f;
         }
@@ -295,7 +295,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             position.y -= 0.1f;
             sppos.x += 5.0f;
             sppos.y += 5.0f;
-        }*/
+        }
 
        
         //Rスティック
@@ -444,7 +444,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region 前景スプライト描画
         //前景スプライト描画前処理
         Sprite::PreDraw(dxCommon->GetCmdList());
-        //sprite->Draw();
+        sprite->Draw();
         if (scene == 0) {
             sprite1->Draw();
         }
