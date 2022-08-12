@@ -257,59 +257,55 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //Lスティック
         if (Input::GetInstance()->GetConMove().lX < u_r - a) {
             position.x -= 0.1f;
-            sppos.x -= 5.0f;
+            
         }
         else if (Input::GetInstance()->GetConMove().lX > u_r + a) {
             position.x += 0.1f;
-            sppos.x += 5.0f;
+            
         }
         if (Input::GetInstance()->GetConMove().lY < u_r - a) {
             position.y += 0.1f;
-            sppos.y -= 5.0f;
+           
         }
         else if (Input::GetInstance()->GetConMove().lY > u_r + a) {
             position.y -= 0.1f;
-            sppos.y += 5.0f;
+           
         }
 
         if (Input::GetInstance()->GetConMove().lX < u_r - 1000 && Input::GetInstance()->GetConMove().lY < u_r - 1000) {
             position.x -= 0.1f;
             position.y += 0.1f;
-            sppos.x -= 5.0f;
-            sppos.y -= 5.0f;
+           
         }
         if (Input::GetInstance()->GetConMove().lX > u_r + 1000 && Input::GetInstance()->GetConMove().lY < u_r - 1000) {
             position.x += 0.1f;
             position.y += 0.1f;
-            sppos.x += 5.0f;
-            sppos.y -= 5.0f;
+           
         }
         if (Input::GetInstance()->GetConMove().lX < u_r - 1000 && Input::GetInstance()->GetConMove().lY > u_r + 1000) {
             position.y += 0.1f;
             position.y -= 0.1f;
-            sppos.y -= 5.0f;
-            sppos.y += 5.0f;
+            
         }
         if (Input::GetInstance()->GetConMove().lX > u_r + 1000 && Input::GetInstance()->GetConMove().lY > u_r + 1000) {
             position.x += 0.1f;
             position.y -= 0.1f;
-            sppos.x += 5.0f;
-            sppos.y += 5.0f;
+            
         }
 
        
         //Rスティック
-        /*if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
-            position.x = sppos.x;
+        if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
+            sppos.x -= 5.0f;
         }
         else if (Input::GetInstance()->GetConMove().lRx > u_r + a) {
-            position.x = sppos.x;
+            sppos.x += 5.0f;
         }
         if (Input::GetInstance()->GetConMove().lRy < u_r - a) {
-            position.y = sppos.y;
+            sppos.y -= 5.0f;
         }
         else if (Input::GetInstance()->GetConMove().lRy > u_r + a) {
-            sppos.y += 6.0f;
+            sppos.y += 5.0f;
         }
 
         if (Input::GetInstance()->GetConMove().lRx < u_r - 1000 && Input::GetInstance()->GetConMove().lRy < u_r - 1000) {
@@ -327,7 +323,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         if (Input::GetInstance()->GetConMove().lRx > u_r + 1000 && Input::GetInstance()->GetConMove().lRy > u_r + 1000) {
             sppos.x += 6.0f;
             sppos.y += 6.0f;
-        }*/
+        }
 
         //Bボタン
         if (Input::GetInstance()->TriggerButtonB()) {
