@@ -37,40 +37,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //FbxManager* fbxManager = FbxManager::Create();
 #pragma region WindowsAPI初期化
     WinApp* winApp = nullptr;
-
     winApp = new WinApp();
     winApp->Initialize();
-
     MSG msg{};  // メッセージ
 #pragma endregion WindowsAPI初期化
-
     HRESULT result;
-
     DirectXCommon* dxCommon = nullptr;
-
     dxCommon = new DirectXCommon();
     dxCommon->Initialize(winApp);
-
-
-    /*Input* input = nullptr;
-    input = Input :: GetInstance();
-    input->Initialize(winApp);*/
     Input::GetInstance()->Initialize(winApp);
-
-
     Object3d::StaticInitialize(dxCommon->GetDev(),winApp->window_width,winApp->window_height);
-
     // スプライト静的初期化
     Sprite::StaticInitialize(dxCommon->GetDev(), WinApp::window_width, WinApp::window_height);
 
     Fbx_Model* model1 = nullptr;
     Fbx_Object3d* object1 = nullptr;
-
+    //プレイヤー
     FbxLoader::GetInstance()->Initialize(dxCommon->GetDev());
     Fbx_Object3d::SetDevice(dxCommon->GetDev());
     Fbx_Object3d::CreateGraphicsPipeline();
     model1 = FbxLoader::GetInstance()->LoadModaleFromFile("shark");
 
+    //カメラ
     DebugCamera* camera = nullptr;
     camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
     Fbx_Object3d::SetCamera(camera);
@@ -89,6 +77,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region 描画初期化処理
     XMFLOAT3 Player_Scl = { 6,6,6 };
     XMFLOAT3 Player_Scl4 = { 5,5,5 };
+    //敵、弾
     Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
    
@@ -109,21 +98,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_2->SetScale({ Player_Scl });
     objsquare_3->SetScale({ Player_Scl });
     objsquare_4->SetScale({ Player_Scl4 });
-    /*objsquare_1->Update();
-    objsquare_2->Update();
-    objsquare_3->Update();
-    objsquare_4->Update();*/
 
     // テクスチャ読み込み
     Sprite::LoadTexture(1, L"Resources/reticle.png");
     Sprite::LoadTexture(2, L"Resources/title.png");
+    Sprite::LoadTexture(3, L"Resources/enemy.png");
+    Sprite::LoadTexture(4, L"Resources/player.png");
+    Sprite::LoadTexture(5, L"Resources/mini.png");
+    Sprite::LoadTexture(6, L"Resources/bullet.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
     Sprite* sprite1 = nullptr;
+    Sprite* sprite2 = nullptr;
+    Sprite* sprite3 = nullptr;
+    Sprite* sprite4 = nullptr;
+    Sprite* sprite5 = nullptr;
     sprite = Sprite::Create(1, { 550.0f,300.0f });
     sprite1 = Sprite::Create(2, { 0.0f,0.0f });
+    sprite2 = Sprite::Create(3, { 80.0f,30.0f });
+    sprite3 = Sprite::Create(4, { 80.0f,110.0f });
+    sprite4 = Sprite::Create(5, { 10.0f,10.0f });
+    sprite5 = Sprite::Create(6, { 80.0f,110.0f });
     //sprite->SetTextureRect();
     XMFLOAT2 sppos = sprite->GetPosition();
+    XMFLOAT2 minienemy_pos = sprite2->GetPosition();
+    XMFLOAT2 bullet_pos = sprite5->GetPosition();
 
 #pragma endregion 描画初期化処理
 
@@ -184,6 +183,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_4->SetPosition({ Player_Pos4 });
         object1->SetPosition({ position });
         sprite->SetPosition(sppos);
+        sprite2->SetPosition(minienemy_pos);
+        sprite5->SetPosition(bullet_pos);
         
         /*if (input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
             if (input->PushKey(DIK_D)) {
@@ -203,10 +204,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //debugText.Print(spriteCommon, "Hello,DirectX!!", 200, 100);
         //// X座標,Y座標,縮尺を指定して表示
         //debugText.Print(spriteCommon, "Nihon Kogakuin", 200, 200, 2.0f);
-
-        //sprite.rotation = 45;
-        //sprite.position = {1280/2, 720/2, 0};
-        //sprite.color = {0, 0, 1, 1};
 
         // GPU上のバッファに対応した仮想メモリを取得
         /*Vertex* vertMap = nullptr;
@@ -230,12 +227,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //キーボード操作
         if (Input::GetInstance()->PushKey(DIK_A)) {
             position.x -= 0.1f;
+            minienemy_pos.x += 0.4;
         }
         if (Input::GetInstance()->PushKey(DIK_S)) {
             position.y -= 0.1f;
         }
         if (Input::GetInstance()->PushKey(DIK_D)) {
             position.x += 0.1f;
+            minienemy_pos.x -= 0.4;
         }
         if (Input::GetInstance()->PushKey(DIK_W)) {
             position.y += 0.1f;
@@ -257,11 +256,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //Lスティック
         if (Input::GetInstance()->GetConMove().lX < u_r - a) {
             position.x -= 0.1f;
-            
+            minienemy_pos.x += 0.4;
         }
         else if (Input::GetInstance()->GetConMove().lX > u_r + a) {
             position.x += 0.1f;
-            
+            minienemy_pos.x -= 0.4;
         }
         if (Input::GetInstance()->GetConMove().lY < u_r - a) {
             position.y += 0.1f;
@@ -325,12 +324,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             sppos.y += 6.0f;
         }
 
-        //Bボタン
         if (Input::GetInstance()->TriggerButtonB()) {
-            object1->PlayAnimation();
+            sppos.x = 590;
+            sppos.y = 260;
         }
 
-       
         if (tf == 0) {
             //Rボタン
             if (Input::GetInstance()->TriggerButtonRB()) {
@@ -443,6 +441,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         sprite->Draw();
         if (scene == 0) {
             sprite1->Draw();
+        }
+        if (scene == 1) {
+            sprite4->Draw();
+            if (enemyf1 == 1) {
+                sprite2->Draw();
+            }
+            sprite3->Draw();
+            if (tf == 1) {
+                sprite5->Draw();
+                bullet_pos.y -= 0.6;
+            }
         }
         //// スプライト描画後処理
         Sprite::PostDraw();

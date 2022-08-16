@@ -53,6 +53,7 @@ public://ƒƒ“ƒoŠÖ”
 	bool TriggerButonX();
 	bool TriggerButonY();
 	bool TriggerButtonRB();
+	bool TriggerButtonRT();
 	bool TriggerButtonLB();
 	bool PushButtonA();
 	ConMove GetConMove();

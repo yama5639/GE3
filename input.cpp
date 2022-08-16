@@ -111,6 +111,17 @@ bool Input::TriggerButtonRB()
 	return false;
 }
 
+bool Input::TriggerButtonRT()
+{
+	// 前回が0で、今回が0でなければトリガー
+	if (!ConStatePre.rgbButtons[7] && ConState.rgbButtons[7]) {
+		return true;
+	}
+
+	// トリガーでない
+	return false;
+}
+
 
 bool Input::TriggerButtonLB()
 {
