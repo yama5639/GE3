@@ -62,12 +62,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     DebugCamera* camera = nullptr;
     camera = new DebugCamera(WinApp::window_width, WinApp::window_height);
     Fbx_Object3d::SetCamera(camera);
-    camera->SetTarget({ 0,2.5f,0 });
-    camera->SetDistance(8.0f);
-    camera->SetEye({ 0,0,0 });
     camera->GetEye();
     camera->GetTarget();
-    XMFLOAT3 eye = { 0,0,-20 };
+    XMFLOAT3 eye = { 0, 0, 0 };
+    XMFLOAT3 target = { 0, 0, 0 };
 
     object1 = new Fbx_Object3d;
     object1->Initialize();
@@ -100,7 +98,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     objsquare_4->SetScale({ Player_Scl4 });
 
     // テクスチャ読み込み
-    Sprite::LoadTexture(1, L"Resources/reticle.png");
+    Sprite::LoadTexture(1, L"Resources/reticle1.png");
     Sprite::LoadTexture(2, L"Resources/title.png");
     Sprite::LoadTexture(3, L"Resources/enemy.png");
     Sprite::LoadTexture(4, L"Resources/player.png");
@@ -171,10 +169,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         counter++;
         counter %= cycle; // 周期を超えたら0に戻る
         float scale = (float)counter / cycle; // [0,1]の数値
+        //コントローラー
         LONG u_r = 32768;
         LONG a = 30000;
        
-
         scale *= 360.0f;
 
         objsquare_1->SetPosition({ Player_Pos1 });
@@ -223,6 +221,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_3->Update();
         objsquare_4->Update();
         object1->Update();
+
+        //カメラ
+        camera->SetTarget({ position });
+        camera->SetDistance(-20.0f);
+        camera->SetEye({ position.x,position.y,position.z });
 
         //キーボード操作
         if (Input::GetInstance()->PushKey(DIK_A)) {
@@ -422,12 +425,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         if (enemyf1 == 1) {
             objsquare_1->Draw();
         }
-        if (enemyf2 == 1) {
+       /* if (enemyf2 == 1) {
             objsquare_2->Draw();
         }
         if (enemyf3 == 1) {
             objsquare_3->Draw();
-        }
+        }*/
         if (tf == 1) {
             objsquare_4->Draw();
         }
@@ -438,12 +441,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma region 前景スプライト描画
         //前景スプライト描画前処理
         Sprite::PreDraw(dxCommon->GetCmdList());
-        sprite->Draw();
+        
         if (scene == 0) {
             sprite1->Draw();
         }
         if (scene == 1) {
-            sprite4->Draw();
+            sprite->Draw();
+           /* sprite4->Draw();
             if (enemyf1 == 1) {
                 sprite2->Draw();
             }
@@ -451,7 +455,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             if (tf == 1) {
                 sprite5->Draw();
                 bullet_pos.y -= 0.6;
-            }
+            }*/
         }
         //// スプライト描画後処理
         Sprite::PostDraw();
