@@ -73,29 +73,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     XMFLOAT3 position = { 0,-7,0 };
 
 #pragma region 描画初期化処理
-    XMFLOAT3 Player_Scl = { 6,6,6 };
-    XMFLOAT3 Player_Scl4 = { 5,5,5 };
+    XMFLOAT3 Player_Scl = { 4,4,4 };
+    XMFLOAT3 Player_Scl4 = { 3,3,3 };
+    XMFLOAT3 building_Scl = { 100,80,50 };
     //敵、弾
-    Model* modelsquare_1 = Model::LoadFromOBJ("sqare");
+    Model* modelsquare_1 = Model::LoadFromOBJ("enemy");
     Model* modelsquare_2 = Model::LoadFromOBJ("block1");
    
+    //背景建物
+    Model* build = Model::LoadFromOBJ("building");
+
     Object3d* objsquare_1 = Object3d::Create();
     Object3d* objsquare_2 = Object3d::Create();
     Object3d* objsquare_3 = Object3d::Create();
     Object3d* objsquare_4 = Object3d::Create();
-    XMFLOAT3 Player_Pos1 = { 0,0,-50 };
-    XMFLOAT3 Player_Pos2 = { -50,0,-50 };
-    XMFLOAT3 Player_Pos3 = { +50,0,-50 };
-    XMFLOAT3 Player_Pos4 = {    50,  50,-180};
+    Object3d* building = Object3d::Create();
+    XMFLOAT3 Player_Pos1 = { 0,0,-150 };
+    XMFLOAT3 Player_Pos2 = { -15,0,-150 };
+    XMFLOAT3 Player_Pos3 = { +15,0,-150 };
+    XMFLOAT3 Player_Pos4 = {  50,50,-180};
+    XMFLOAT3 building5 = { 0,-30,-100 };
     objsquare_1->SetModel(modelsquare_1);
     objsquare_2->SetModel(modelsquare_1);
     objsquare_3->SetModel(modelsquare_1);
     objsquare_4->SetModel(modelsquare_2);
+    building->SetModel(build);
 
     objsquare_1->SetScale({ Player_Scl });
     objsquare_2->SetScale({ Player_Scl });
     objsquare_3->SetScale({ Player_Scl });
     objsquare_4->SetScale({ Player_Scl4 });
+    building->SetScale({ building_Scl });
 
     // テクスチャ読み込み
     Sprite::LoadTexture(1, L"Resources/reticle1.png");
@@ -111,15 +119,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Sprite* sprite3 = nullptr;
     Sprite* sprite4 = nullptr;
     Sprite* sprite5 = nullptr;
+    Sprite* sprite6 = nullptr;
+    Sprite* sprite7 = nullptr;
     sprite = Sprite::Create(1, { 550.0f,300.0f });
     sprite1 = Sprite::Create(2, { 0.0f,0.0f });
-    sprite2 = Sprite::Create(3, { 80.0f,30.0f });
+    sprite2 = Sprite::Create(3, { 80.0f,50.0f });
     sprite3 = Sprite::Create(4, { 80.0f,110.0f });
     sprite4 = Sprite::Create(5, { 10.0f,10.0f });
     sprite5 = Sprite::Create(6, { 80.0f,110.0f });
+    sprite6 = Sprite::Create(3, { 20.0f,50.0f });
+    sprite7 = Sprite::Create(3, { 140.0f,50.0f });
     //sprite->SetTextureRect();
     XMFLOAT2 sppos = sprite->GetPosition();
     XMFLOAT2 minienemy_pos = sprite2->GetPosition();
+    XMFLOAT2 minienemy_pos2 = sprite6->GetPosition();
+    XMFLOAT2 minienemy_pos3 = sprite7->GetPosition();
     XMFLOAT2 bullet_pos = sprite5->GetPosition();
 
 #pragma endregion 描画初期化処理
@@ -130,12 +144,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     int enemyf1 = 1;
     int enemyf2 = 1;
     int enemyf3 = 1;
-    int bulletr = 10;
-    int ener = 5;
+    int bulletr = 3;
+    int ener = 3;
     float length1;
     float length2;
     float length3;
     int timer = 100;
+    float speed = 0.1;
+    float speed1 = 0.1;
 #pragma region//オーディオ
     ////オーディオ
     //const int AudioMax = 1;
@@ -183,6 +199,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         sprite->SetPosition(sppos);
         sprite2->SetPosition(minienemy_pos);
         sprite5->SetPosition(bullet_pos);
+        sprite6->SetPosition(minienemy_pos2);
+        sprite7->SetPosition(minienemy_pos3);
+        building->SetPosition({ building5 });
         
         /*if (input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
             if (input->PushKey(DIK_D)) {
@@ -220,6 +239,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         objsquare_2->Update();
         objsquare_3->Update();
         objsquare_4->Update();
+        building->Update();
         object1->Update();
 
         //カメラ
@@ -231,6 +251,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         if (Input::GetInstance()->PushKey(DIK_A)) {
             position.x -= 0.1f;
             minienemy_pos.x += 0.4;
+            minienemy_pos2.x += 0.4;
+            minienemy_pos3.x += 0.4;
         }
         if (Input::GetInstance()->PushKey(DIK_S)) {
             position.y -= 0.1f;
@@ -238,6 +260,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         if (Input::GetInstance()->PushKey(DIK_D)) {
             position.x += 0.1f;
             minienemy_pos.x -= 0.4;
+            minienemy_pos2.x -= 0.4;
+            minienemy_pos3.x -= 0.4;
         }
         if (Input::GetInstance()->PushKey(DIK_W)) {
             position.y += 0.1f;
@@ -254,6 +278,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
         Player_Pos4.x = position.x;
         Player_Pos4.y = position.y;
+        if (enemyf2 == 1) {
+            Player_Pos2.y += speed;
+            if (Player_Pos2.y >= 20 || Player_Pos2.y <= -10) {
+                speed = -speed;
+            }
+        }
+        if (enemyf3 == 1) {
+            Player_Pos3.y -= speed1;
+            if (Player_Pos3.y >= 20 || Player_Pos3.y <= -10) {
+                speed1 = -speed1;
+            }
+        }
         
         //コントローラー
         //Lスティック
@@ -366,7 +402,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         if (tf == 1) {
             Player_Pos4.z++;
-            if (100 <= Player_Pos4.z) {
+            if (-50 <= Player_Pos4.z) {
                 tf = 0;
             }
         }
@@ -416,24 +452,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         // 3Dオブジェクト描画前処理
        
         // 3Dオブクジェクトの描画
-     
-        //objsquare_2->Draw();
-        //objsquare_3->Draw();
-       
         // 3Dオブジェクト描画後処理
         Object3d::PreDraw(dxCommon->GetCmdList());
         if (enemyf1 == 1) {
             objsquare_1->Draw();
         }
-       /* if (enemyf2 == 1) {
+        if (enemyf2 == 1) {
             objsquare_2->Draw();
         }
         if (enemyf3 == 1) {
             objsquare_3->Draw();
-        }*/
+        }
         if (tf == 1) {
             objsquare_4->Draw();
         }
+        building->Draw();
         object1->Draw(dxCommon->GetCmdList());
         Object3d::PostDraw();
         //postEffect->Draw(dxCommon->GetCmdList());
@@ -446,16 +479,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             sprite1->Draw();
         }
         if (scene == 1) {
-            sprite->Draw();
-           /* sprite4->Draw();
+            //sprite->Draw();
+            sprite4->Draw();
             if (enemyf1 == 1) {
-                sprite2->Draw();
+                if (15 < minienemy_pos.x && minienemy_pos.x <= 145) {
+                    sprite2->Draw();
+                }
+            }
+            if (enemyf2 == 1) {
+                if (15 < minienemy_pos2.x && minienemy_pos2.x <= 145) {
+                    sprite6->Draw();
+                }
+            }
+            if (enemyf3 == 1) {
+                if (15 < minienemy_pos3.x && minienemy_pos3.x < 145) {
+                    sprite7->Draw();
+                }
             }
             sprite3->Draw();
             if (tf == 1) {
-                sprite5->Draw();
-                bullet_pos.y -= 0.6;
-            }*/
+                if (15 <= bullet_pos.y) {
+                    sprite5->Draw();
+                    bullet_pos.y -= 2.0;
+                }
+            }
+            if (tf == 0) {
+                bullet_pos.y = 110;
+            }
         }
         //// スプライト描画後処理
         Sprite::PostDraw();
