@@ -17,6 +17,7 @@ public:
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public://メンバ関数
+	//コントローラー
 	struct ConMove {
 		LONG    lX;
 		LONG    lY;
@@ -25,6 +26,12 @@ public://メンバ関数
 		LONG    lRy;
 		LONG    lRz;
 		BYTE    rgbButtons[32];
+	};
+	//マウス
+	struct MouseMove {
+		LONG    lX;
+		LONG    lY;
+		LONG    lZ;
 	};
 
 	//初期化
@@ -58,6 +65,13 @@ public://メンバ関数
 	bool PushButtonA();
 	ConMove GetConMove();
 
+	//マウス
+	bool PushMouseLeft();
+	bool PushMouseMiddle();
+	bool TriggerMouseLeft();
+	bool TriggerMouseMiddle();
+	MouseMove GetMouseMove();
+
 private://メンバ関数
 	//キーボードのデバイス
 	ComPtr<IDirectInputDevice8> devkeyboard;
@@ -72,6 +86,11 @@ private://メンバ関数
 	ComPtr<IDirectInputDevice8> devCon;
 	DIJOYSTATE2 ConState = {};
 	DIJOYSTATE2 ConStatePre = {};
+
+	//マウス
+	ComPtr<IDirectInputDevice8> devMouse;
+	DIMOUSESTATE2 MouseState = {};
+	DIMOUSESTATE2 MouseStatePre = {};
 
 	WinApp* winApp = nullptr;
 };

@@ -23,9 +23,8 @@ void Input::Initialize(WinApp* winApp) {
     result = devkeyboard->SetCooperativeLevel(
         winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 
-    //コントローラー
+    //コントローラー//
     result = dinput->CreateDevice(GUID_Joystick, &devCon, NULL);
-
     // 入力データ形式のセット
     if (devCon != nullptr) {
         result = devCon->SetDataFormat(&c_dfDIJoystick2); // 標準形式
@@ -33,21 +32,31 @@ void Input::Initialize(WinApp* winApp) {
         // 排他制御レベルのセット
         result = devCon->SetCooperativeLevel(winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
     }
+
+	//マウス//
+	result = dinput->CreateDevice(GUID_SysMouse, &devMouse, NULL);
+	// 入力データ形式のセット
+	result = devMouse->SetDataFormat(&c_dfDIMouse2); // 標準形式
+
+	// 排他制御レベルのセット
+	result = devMouse->SetCooperativeLevel(winApp->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+
 }
 
 void Input::Update() {
-    HRESULT result;
+	HRESULT result;
+	{
+		////前回のキー入力を保存
+		memcpy(keyPre, key, sizeof(key));
 
-    ////前回のキー入力を保存
-    memcpy(keyPre, key, sizeof(key));
+		//キーボード情報の取得開始
+		result = devkeyboard->Acquire();
+		//全キーの入力情報を取得する
+		result = devkeyboard->GetDeviceState(sizeof(key), key);
 
-    //キーボード情報の取得開始
-    result = devkeyboard->Acquire();
-    //全キーの入力情報を取得する
-    result = devkeyboard->GetDeviceState(sizeof(key), key);
+	}
 
-    //コントローラー
-    {
+    {//コントローラー
         if (devCon != nullptr) {
             result = devCon->Acquire();	// マウス動作開始
 
@@ -59,6 +68,15 @@ void Input::Update() {
         }
     }
 
+	{// マウス
+		result = devMouse->Acquire();	// マウス動作開始
+
+		// 前回の入力を保存
+		MouseStatePre = MouseState;
+
+		// マウスの入力
+		result = devMouse->GetDeviceState(sizeof(MouseState), &MouseState);
+	}
 }
 
 bool Input::PushKey(BYTE keyNumber) {
@@ -174,5 +192,58 @@ Input::ConMove Input::GetConMove()
 	tmp.lRx = ConState.lRx;
 	tmp.lRy = ConState.lRy;
 	tmp.lRz = ConState.lRz;
+	return tmp;
+}
+
+bool Input::PushMouseLeft()
+{
+	// 0でなければ押している
+	if (MouseState.rgbButtons[0]) {
+		return true;
+	}
+
+	// 押していない
+	return false;
+}
+
+bool Input::PushMouseMiddle()
+{
+	// 0でなければ押している
+	if (MouseState.rgbButtons[2]) {
+		return true;
+	}
+
+	// 押していない
+	return false;
+}
+
+bool Input::TriggerMouseLeft()
+{
+	// 前回が0で、今回が0でなければトリガー
+	if (!MouseStatePre.rgbButtons[0] && MouseState.rgbButtons[0]) {
+		return true;
+	}
+
+	// トリガーでない
+	return false;
+}
+
+bool Input::TriggerMouseMiddle()
+{
+	// 前回が0で、今回が0でなければトリガー
+	if (!MouseStatePre.rgbButtons[2] && MouseState.rgbButtons[2]) {
+		return true;
+	}
+
+	// トリガーでない
+	return false;
+}
+
+Input::MouseMove Input::GetMouseMove()
+{
+	MouseMove tmp;
+	tmp.lX = MouseState.lX;
+	tmp.lY = MouseState.lY;
+	tmp.lZ = MouseState.lZ;
 	return tmp;
 }

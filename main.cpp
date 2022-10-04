@@ -293,7 +293,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         
         //コントローラー
         //Lスティック
-        if (Input::GetInstance()->GetConMove().lX < u_r - a) {
+        /*if (Input::GetInstance()->GetConMove().lX < u_r - a) {
             position.x -= 0.1f;
             minienemy_pos.x += 0.4;
         }
@@ -329,7 +329,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             position.x += 0.1f;
             position.y -= 0.1f;
             
-        }
+        }*/
 
        
         //Rスティック
@@ -479,7 +479,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             sprite1->Draw();
         }
         if (scene == 1) {
-            //sprite->Draw();
+            sprite->Draw();
             sprite4->Draw();
             if (enemyf1 == 1) {
                 if (15 < minienemy_pos.x && minienemy_pos.x <= 145) {
