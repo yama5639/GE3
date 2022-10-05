@@ -140,7 +140,6 @@ bool Input::TriggerButtonRT()
 	return false;
 }
 
-
 bool Input::TriggerButtonLB()
 {
 	// 前回が0で、今回が0でなければトリガー

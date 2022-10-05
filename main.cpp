@@ -5,10 +5,8 @@
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 
-
 #include <DirectXTex.h>
 #include <wrl.h>
-
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
 
@@ -30,7 +28,6 @@
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
-
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -112,6 +109,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Sprite::LoadTexture(4, L"Resources/player.png");
     Sprite::LoadTexture(5, L"Resources/mini.png");
     Sprite::LoadTexture(6, L"Resources/bullet.png");
+    Sprite::LoadTexture(7, L"Resources/HP1.png");
+    Sprite::LoadTexture(8, L"Resources/HP2.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
     Sprite* sprite1 = nullptr;
@@ -121,6 +120,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Sprite* sprite5 = nullptr;
     Sprite* sprite6 = nullptr;
     Sprite* sprite7 = nullptr;
+    Sprite* sprite8 = nullptr;
+    Sprite* sprite9 = nullptr;
+
     sprite = Sprite::Create(1, { 550.0f,300.0f });
     sprite1 = Sprite::Create(2, { 0.0f,0.0f });
     sprite2 = Sprite::Create(3, { 80.0f,50.0f });
@@ -129,6 +131,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     sprite5 = Sprite::Create(6, { 80.0f,110.0f });
     sprite6 = Sprite::Create(3, { 20.0f,50.0f });
     sprite7 = Sprite::Create(3, { 140.0f,50.0f });
+    sprite8 = Sprite::Create(7, { 20.0f,600.0f });
+    sprite9 = Sprite::Create(8, { 20.0f,600.0f });
     //sprite->SetTextureRect();
     XMFLOAT2 sppos = sprite->GetPosition();
     XMFLOAT2 minienemy_pos = sprite2->GetPosition();
@@ -333,7 +337,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
        
         //Rスティック
-        if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
+        /*if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
             sppos.x -= 5.0f;
         }
         else if (Input::GetInstance()->GetConMove().lRx > u_r + a) {
@@ -366,7 +370,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         if (Input::GetInstance()->TriggerButtonB()) {
             sppos.x = 590;
             sppos.y = 260;
-        }
+        }*/
 
         if (tf == 0) {
             //Rボタン
@@ -479,8 +483,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             sprite1->Draw();
         }
         if (scene == 1) {
-            sprite->Draw();
+            //sprite->Draw();
             sprite4->Draw();
+            sprite8->Draw();
+            sprite9->Draw();
             if (enemyf1 == 1) {
                 if (15 < minienemy_pos.x && minienemy_pos.x <= 145) {
                     sprite2->Draw();
