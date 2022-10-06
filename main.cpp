@@ -110,7 +110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     Sprite::LoadTexture(5, L"Resources/mini.png");
     Sprite::LoadTexture(6, L"Resources/bullet.png");
     Sprite::LoadTexture(7, L"Resources/HP1.png");
-    Sprite::LoadTexture(8, L"Resources/HP2.png");
+    Sprite::LoadTexture(8, L"Resources/HP.png");
     // 背景スプライト生成
     Sprite* sprite = nullptr;
     Sprite* sprite1 = nullptr;
