@@ -282,6 +282,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
         Player_Pos4.x = position.x;
         Player_Pos4.y = position.y;
+
+        //敵の行動パターン
         if (enemyf2 == 1) {
             Player_Pos2.y += speed;
             if (Player_Pos2.y >= 20 || Player_Pos2.y <= -10) {
@@ -335,7 +337,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             
         }*/
 
-       
         //Rスティック
         /*if (Input::GetInstance()->GetConMove().lRx < u_r - a) {
             sppos.x -= 5.0f;
@@ -372,12 +373,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             sppos.y = 260;
         }*/
 
-        if (tf == 0) {
-            //Rボタン
-            if (Input::GetInstance()->TriggerButtonRB()) {
-                tf = 1;
-            }
-        }
+        //if (tf == 0) {
+        //    //Rボタン
+        //    if (Input::GetInstance()->TriggerButtonRB()) {
+        //        tf = 1;
+        //    }
+        //}
 
         //弾と敵の衝突判定
         if (tf == 1) {
