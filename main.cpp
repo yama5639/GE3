@@ -193,9 +193,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     int timer = 100;
     float speed = 0.1;
     float speed1 = 0.1;
-    int enemybullettime1 = 0;
-    int enemybullettime2 = 0;
-    int enemybullettime3 = 0;
     int killcount = 0;
     int hpcount = 0;
 #pragma region//オーディオ
@@ -208,10 +205,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     //}
 #pragma endregion
 
-    PostEffect* postEffect = nullptr;
+    //PostEffect* postEffect = nullptr;
     //Sprite::LoadTexture(100, L"Resources/white1x1.png");
-    postEffect = new PostEffect();
-    postEffect->Initialize();
+    //postEffect = new PostEffect();
+    //postEffect->Initialize();
 
     while (true)  // ゲームループ
     {
@@ -598,24 +595,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
         
         //if (scene == 2) {
-        //    if (Input::GetInstance()->PushKey(DIK_RETURN)) {
-        //        scene = 1;
-        //        objsquare_1->SetPosition({ Player_Pos1 });
-        //        objsquare_2->SetPosition({ Player_Pos2 });
-        //        objsquare_3->SetPosition({ Player_Pos3 });
-        //        objsquare_4->SetPosition({ Player_Pos4 });
-        //        airplane->SetPosition({ position });
-        //        sprite->SetPosition(sppos);
-        //        sprite2->SetPosition(minienemy_pos);
-        //        sprite5->SetPosition(bullet_pos);
-        //        sprite6->SetPosition(minienemy_pos2);
-        //        sprite7->SetPosition(minienemy_pos3);
-        //        building->SetPosition({ building5 });
-        //        enemybullet_1->SetPosition({ Enemybullet_Pos1 });
-        //        enemybullet_2->SetPosition({ Enemybullet_Pos2 });
-        //        enemybullet_3->SetPosition({ Enemybullet_Pos3 });
+        //    if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+        //        scene = 0;
+        //        
+
         //        counter = 0; // アニメーションの経過時間カウンター
         //        tf = 0;
+        //        
         //        enemyf1 = 1;
         //        enemyf2 = 1;
         //        enemyf3 = 1;
@@ -627,16 +613,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         //        enebf3 = 1;
         //        ener = 3;
         //        playerr = 1;
-        //        length1;
-        //        length2;
-        //        length3;
-        //        length4;
-        //        length5;
-        //        length6;
+        //        
         //        timer = 100;
         //        speed = 0.1;
         //        speed1 = 0.1;
-        //        enemybullettime = 0;
+        //        
+        //        killcount = 0;
+        //        hpcount = 0;
         //    }
         //}
 #pragma region グラフィックスコマンド
@@ -768,6 +751,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     delete objsquare_3;
     delete objsquare_4;
     delete object1;
-    delete postEffect;
+    //delete postEffect;
     return 0;
 }
